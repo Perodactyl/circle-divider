@@ -7,6 +7,9 @@
 	<script src="jq.js"></script>
 	<title>Circle Divider</title>
 	<style>
+		div {
+			width: fit-content;
+		}
 		input[type=range].ruleElem{
 			margin-left:25px;
 			border-color: #999999;
@@ -19,7 +22,7 @@
 			background: #222222;
 			color: white;
 		}
-		body button {
+		button {
 			border: outset 2px #999999;
 			border-radius: 5px;
 			color:white;
@@ -57,7 +60,7 @@ body input, body button {
 	<button id="remstyle" onclick="$('style').remove();light=true;update();this.remove()">Remove Styles</button>
 	<canvas id="circleCanvas" width="300" height="300"></canvas>
 	<button id="add" onclick="addRule()">Add</button>
-	<input id="additive" type="checkbox" onclick="update()">Additive<input type="checkbox" id="outline" onclick="update()">Show bounds circle<br>
+	<input id="additive" type="checkbox" onclick="update()">Additive<input type="checkbox" id="outline" onclick="update()">Show bounds circle<input type="checkbox" id="highlight" onclick="update()">Highlight Lines<br>
 	Type:<select id="settings">
 		<option value="full">Full circle</option>
 		<option value="none">No Circle</option>

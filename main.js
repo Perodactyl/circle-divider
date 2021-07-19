@@ -39,11 +39,23 @@ function drawCircle(rad, pos, fill=false){
 }
 var offset = new Vector2()
 var rad = 150
+var lastID = -1
+var highlighted = -1
 function addRule(){
+	lastID++
     var newRule = document.createElement("div")
     newRule.dataset.whole = "no"
     newRule.dataset.value = "180"
 	newRule.dataset.color = "#000000"
+	newRule.dataset.id = lastID
+	newRule.onmouseenter = ()=>{
+		highlighted = Number(newRule.dataset.id)
+		update()
+	}
+	newRule.onmouseleave = ()=>{
+		highlighted = -1
+		update()
+	}
     var whole = document.createElement("input")
     whole.type = "checkbox"
     whole.onchange = ()=>{
@@ -117,6 +129,7 @@ function update(){
 	var rules = $("#rules")[0].children
 	var additive = $("#additive")[0].checked
 	var addAngle = 0
+	var highlight = $("#highlight")[0].checked
     ctx.clearRect(0, 0, canv.width, canv.height)
 	if(out.checked && rad){
 		let oldStroke = ctx.strokeStyle
@@ -191,15 +204,68 @@ function update(){
 				ctx.moveTo(x,y)
 			}
 		}
+		var hS = rules[i].dataset.id == highlighted && highlight //Highlight Self
+		var oldStroke = ctx.strokeStyle
+		var oldWidth = ctx.lineWidth
+		if(hS){
+			ctx.strokeStyle = light ? "darkblue" :"cyan"
+			ctx.lineWidth = 3
+		}
 		ctx.beginPath()
 		ctx.moveTo(offset.x, offset.y)
 		ctx.lineTo(x, y)
+		ctx.stroke()
 		if(whole){
+			if(hS){
+				ctx.strokeStyle = light ? "green" : "lime"
+			}
+			ctx.beginPath()
 			ctx.moveTo(offset.x, offset.y)
 			ctx.lineTo(-x, -y)
+			ctx.stroke()
 		}
-		ctx.stroke()
+		ctx.lineWidth = oldWidth
+		ctx.strokeStyle = oldStroke
 	}
 	ctx.restore()
 }
 update()
+
+var intervals = {}
+
+function msUpdate(ms){
+	Object.keys(intervals).forEach((v)=>{
+		if(ms == v){
+			intervals[v].forEach((f)=>{
+				f()
+			})
+		}
+	})
+}
+
+function addInterval(timing, command){
+	var m = command.match(/(\+\+?|\+([0-9])+)@([0-9]+)/)
+	if(!m){
+		return
+	}
+	if(!intervals[timing]){
+		intervals[timing] = []
+	}
+	intervals[timing].unshift(function(){
+		var el = $(`[data-id=${m[3]}]`).children("input[type=number]");
+		if(m[1] == "+" || m[1] == "++"){
+			el.val(Number(el.val())+1);
+		}else{
+			el.val(Number(el.val())+Number(m[2]))
+		}
+		el.val(Number(el.val())%360)
+		el.parent().data("value", el.val())
+		el.siblings("input[type=range]").val(el.val())
+		el.siblings("input[type=range]")[0].onmousemove()
+	})
+}
+
+setInterval(msUpdate, 25, 25)
+setInterval(msUpdate, 100, 100)
+setInterval(msUpdate, 500, 500)
+setInterval(msUpdate, 1000, 1000)
