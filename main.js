@@ -5,6 +5,7 @@ var ctx = canv.getContext("2d")
 var rules = document.getElementById("rules")
 var type = document.getElementById("settings")
 type.onchange = update
+var out = document.getElementById("outline")
 class Vector2{
     x=0
     y=0
@@ -29,7 +30,8 @@ function drawCircle(rad, pos, fill=false){
         ctx.stroke()
     }
 }
-
+var offset = new Vector2()
+var rad = 150
 function addRule(){
     var newRule = document.createElement("div")
     newRule.dataset.whole = "no"
@@ -47,6 +49,16 @@ function addRule(){
     slider.min = 0
     slider.max = 360
     slider.value = 180
+	var slideInt = 0
+	slider.onmousedown = ()=>{
+		slideInt = setInterval(update, 25)
+	}
+	slider.onmouseup = ()=>{
+		if(slideInt){
+			clearInterval(slideInt)
+			slideInt = 0
+		}
+	}
     newRule.append(slider)
     var rawIn = document.createElement("input")
     rawIn.type = "number"
@@ -90,13 +102,23 @@ function addRule(){
 	update()
 }
 function update(){
+	if(rad == 0){
+		ctx.clearRect(0, 0, canv.width, canv.height)
+		return
+	}
 	var circRule = type.value
 	var rules = $("#rules")[0].children
 	var additive = $("#additive")[0].checked
 	var addAngle = 0
     ctx.clearRect(0, 0, canv.width, canv.height)
+	if(out.checked){
+		let oldStroke = ctx.strokeStyle
+		ctx.strokeStyle = "#00000088"
+		drawCircle(rad-1, center, false)
+		ctx.strokeStyle = oldStroke
+	}
 	if(circRule == "full"){
-    	drawCircle(149, center)
+    	drawCircle(rad-1, center)
 	}
 	ctx.save()
 	ctx.translate(center.x, center.y)
@@ -113,8 +135,8 @@ function update(){
 		}
 		let whole = rules[i].dataset.whole == "yes"
 		val *= (Math.PI/180)
-		let x = Math.cos(val)*149
-		let y = Math.sin(val)*149
+		let x = Math.cos(val)*(rad-1)
+		let y = Math.sin(val)*(rad-1)
 		if(circRule == "between" || circRule == "betret"){
 			if(!moved){
 				moved = true
@@ -123,9 +145,9 @@ function update(){
 				startAngle = val
 			}else{
 				ctx.beginPath()
-				ctx.arc(0, 0, 149, currentPos, val)
+				ctx.arc(offset.x, offset.y, rad-1, currentPos, val)
 				if(i+1 == rules.length && circRule == "betret"){
-					ctx.arc(0, 0, 149, val, startAngle)
+					ctx.arc(offset.x, offset.y, rad-1, val, startAngle)
 				}
 				ctx.stroke()
 				currentPos = val
@@ -163,10 +185,10 @@ function update(){
 			}
 		}
 		ctx.beginPath()
-		ctx.moveTo(0, 0)
+		ctx.moveTo(offset.x, offset.y)
 		ctx.lineTo(x, y)
 		if(whole){
-			ctx.moveTo(0, 0)
+			ctx.moveTo(offset.x, offset.y)
 			ctx.lineTo(-x, -y)
 		}
 		ctx.stroke()

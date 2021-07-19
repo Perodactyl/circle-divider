@@ -15,7 +15,7 @@
 <body>
     <canvas id="circleCanvas" style="background-color: pink;" width="300" height="300"></canvas>
     <button id="add" onclick="addRule()">Add</button>
-    <input id="additive" type="checkbox" onclick="update()">Additive<br>
+    <input id="additive" type="checkbox" onclick="update()">Additive<input type="checkbox" id="outline" onclick="update()">Show bounds circle<br>
     Type:<select id="settings">
         <option value="full">Full circle</option>
         <option value="none">No Circle</option>
@@ -24,8 +24,8 @@
         <option value="line">Line around shape</option>
         <option value="lineret">Line around with return</option>
         <option value="ret">Return each time</option>
-    </select>
-    <div id="rules">Whole Rotation(Slider)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotation(Number)</div>
+    </select> Vertical Offset: <input type="range" min="-150" max="150" onmousemove="offset.y = this.value;update()" id="offsety"><button onclick="$('#offsety').val('0');$('#rad').val('150');rad=150;offset.y=0;update()">Reset</button>Radius: <input type="range" id="rad" min="0" value="150" max="300" onmousemove="rad = this.value;update()">
+    <div id="rules">Whole | Rotation(Slider)&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Rotation(Number)</div>
     <script src="main.js"></script>
 </body>
 </html>
