@@ -152,9 +152,9 @@ function update(){
 				startAngle = val
 			}else{
 				ctx.beginPath()
-				if(rad > 0)ctx.arc(offset.x, offset.y, rad-1, currentPos, val)
-				if(i+1 == rules.length && circRule == "betret" && rad){
-					ctx.arc(offset.x, offset.y, rad-1, val, startAngle)
+				if(rad > 0)ctx.arc(0, 0, rad-1, currentPos, val)
+				if(i+1 == rules.length && circRule == "betret" && rad > 0){
+					ctx.arc(0, 0, rad-1, val, startAngle)
 				}
 				ctx.stroke()
 				currentPos = val
