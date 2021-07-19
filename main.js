@@ -26,6 +26,9 @@ var center = new Vector2(150, 150)
  * @param {boolean} fill
  */
 function drawCircle(rad, pos, fill=false){
+	if(rad <= 0){
+		return
+	}
     ctx.beginPath()
     ctx.arc(pos.x, pos.y, rad, 0, Math.PI*2)
     if(fill){
@@ -107,10 +110,6 @@ function addRule(){
 	update()
 }
 function update(){
-	if(rad == 0){
-		ctx.clearRect(0, 0, canv.width, canv.height)
-		return
-	}
 	if(light){
 		ctx.strokeStyle = "#000000"
 	}
@@ -119,13 +118,13 @@ function update(){
 	var additive = $("#additive")[0].checked
 	var addAngle = 0
     ctx.clearRect(0, 0, canv.width, canv.height)
-	if(out.checked){
+	if(out.checked && rad){
 		let oldStroke = ctx.strokeStyle
 		ctx.strokeStyle = light ? "#00000088" : "#FFFFFF88"
 		drawCircle(rad-1, center, false)
 		ctx.strokeStyle = oldStroke
 	}
-	if(circRule == "full"){
+	if(circRule == "full" && rad){
     	drawCircle(rad-1, center)
 	}
 	ctx.save()
@@ -153,8 +152,8 @@ function update(){
 				startAngle = val
 			}else{
 				ctx.beginPath()
-				ctx.arc(offset.x, offset.y, rad-1, currentPos, val)
-				if(i+1 == rules.length && circRule == "betret"){
+				if(rad > 0)ctx.arc(offset.x, offset.y, rad-1, currentPos, val)
+				if(i+1 == rules.length && circRule == "betret" && rad){
 					ctx.arc(offset.x, offset.y, rad-1, val, startAngle)
 				}
 				ctx.stroke()
