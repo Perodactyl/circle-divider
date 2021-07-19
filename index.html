@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="jq.js"></script>
+    <title>Circle Divider</title>
+    <style>
+        input[type=range]{
+            margin-left:25px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="circleCanvas" style="background-color: pink;" width="300" height="300"></canvas>
+    <button id="add" onclick="addRule()">Add</button>
+    <input id="additive" type="checkbox" onclick="update()">Additive<br>
+    Type:<select id="settings">
+        <option value="full">Full circle</option>
+        <option value="none">No Circle</option>
+        <option value="between">Circle Between Lines</option>
+        <option value="betret">Circle Between with return</option>
+        <option value="line">Line around shape</option>
+        <option value="lineret">Line around with return</option>
+        <option value="ret">Return each time</option>
+    </select>
+    <div id="rules">Whole Rotation(Slider)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rotation(Number)</div>
+    <script src="main.js"></script>
+</body>
+</html>
