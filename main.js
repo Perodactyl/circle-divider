@@ -6,6 +6,7 @@ var rules = document.getElementById("rules")
 var type = document.getElementById("settings")
 type.onchange = update
 var out = document.getElementById("outline")
+var light = false
 class Vector2{
     x=0
     y=0
@@ -14,7 +15,9 @@ class Vector2{
         this.y = y
     }
 }
-ctx.strokeStyle = "white"
+if(!light){
+	ctx.strokeStyle = "white"
+}
 var center = new Vector2(150, 150)
 /**
  * 
@@ -108,6 +111,9 @@ function update(){
 		ctx.clearRect(0, 0, canv.width, canv.height)
 		return
 	}
+	if(light){
+		ctx.strokeStyle = "#000000"
+	}
 	var circRule = type.value
 	var rules = $("#rules")[0].children
 	var additive = $("#additive")[0].checked
@@ -115,7 +121,7 @@ function update(){
     ctx.clearRect(0, 0, canv.width, canv.height)
 	if(out.checked){
 		let oldStroke = ctx.strokeStyle
-		ctx.strokeStyle = "#FFFFFF88"
+		ctx.strokeStyle = light ? "#00000088" : "#FFFFFF88"
 		drawCircle(rad-1, center, false)
 		ctx.strokeStyle = oldStroke
 	}

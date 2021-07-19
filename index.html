@@ -31,12 +31,20 @@
 		input[type=checkbox]{
 			background-color: #999999;
 		}
+		#remstyle{
+			position: absolute;
+			top:3px;
+			right:3px;
+			background-color: white;
+			color:black;
+		}
 body input, body button {
 	background-color: #2C2C2C;
 }
 	</style>
 </head>
 <body>
+	<button id="remstyle" onclick="$('style').remove();light=true;update();this.remove()">Remove Styles</button>
 	<canvas id="circleCanvas" width="300" height="300"></canvas>
 	<button id="add" onclick="addRule()">Add</button>
 	<input id="additive" type="checkbox" onclick="update()">Additive<input type="checkbox" id="outline" onclick="update()">Show bounds circle<br>
