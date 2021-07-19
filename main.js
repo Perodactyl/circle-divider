@@ -14,6 +14,7 @@ class Vector2{
         this.y = y
     }
 }
+ctx.strokeStyle = "white"
 var center = new Vector2(150, 150)
 /**
  * 
@@ -49,6 +50,7 @@ function addRule(){
     slider.min = 0
     slider.max = 360
     slider.value = 180
+	slider.classList.add("ruleElem")
 	var slideInt = 0
 	slider.onmousedown = ()=>{
 		slideInt = setInterval(update, 25)
@@ -113,7 +115,7 @@ function update(){
     ctx.clearRect(0, 0, canv.width, canv.height)
 	if(out.checked){
 		let oldStroke = ctx.strokeStyle
-		ctx.strokeStyle = "#00000088"
+		ctx.strokeStyle = "#FFFFFF88"
 		drawCircle(rad-1, center, false)
 		ctx.strokeStyle = oldStroke
 	}
