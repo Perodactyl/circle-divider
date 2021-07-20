@@ -149,6 +149,7 @@ function update(){
 	var startAngle = 0
 	for(let i = 0; i < rules.length; i++){
 		let val = Number(rules[i].dataset.value)
+		let hS = rules[i].dataset.id == highlighted && highlight //Highlight Self
 		if(additive){
 			addAngle += val
 			val = addAngle
@@ -163,17 +164,55 @@ function update(){
 				ctx.moveTo(x, y)
 				currentPos = val
 				startAngle = val
-			}else{
+			}else if(rules.length > 1){
+				ctx.beginPath()
+				let oldStroke = ctx.strokeStyle
+				let oldWidth = ctx.lineWidth
+				if(highlight && rules[i-1] && rules[i-1].dataset.id == highlighted){
+					ctx.strokeStyle = "orange"
+					ctx.lineWidth = 2
+				}
+				if(hS){
+					ctx.strokeStyle = "red"
+					ctx.lineWidth = 2
+				}
 				ctx.beginPath()
 				if(rad > 0)ctx.arc(0, 0, rad-1, currentPos, val)
-				if(i+1 == rules.length && circRule == "betret" && rad > 0){
-					ctx.arc(0, 0, rad-1, val, startAngle)
-				}
 				ctx.stroke()
+				if(i+1 == rules.length && circRule == "betret" && rad > 0){
+					if(hS){
+						ctx.strokeStyle = "orange"
+					}else if(highlight && highlighted == 0){
+						ctx.strokeStyle = "red"
+						ctx.lineWidth = 2
+					}else{
+						ctx.strokeStyle = oldStroke
+						ctx.lineWidth = oldWidth
+					}
+					ctx.beginPath()
+					ctx.arc(0, 0, rad-1, val, startAngle)
+					ctx.stroke()
+				}
+				ctx.strokeStyle = oldStroke
+				ctx.lineWidth = oldWidth
 				currentPos = val
 			}
+			// }else if(rules.length == 1 && hS){
+			// 	let oldStroke = ctx.strokeStyle
+			// 	let oldWidth = ctx.lineWidth
+			// 	ctx.strokeStyle = "red"
+			// 	drawCircle(rad-1, new Vector2())
+			// 	ctx.strokeStyle = "orange"
+			// 	drawCircle(rad-1, new Vector2())
+			// 	ctx.strokeStyle = oldStroke
+			// 	ctx.lineWidth = oldWidth
+			// }else{
+			// 	//drawCircle(rad-1, new Vector2())
+			// }
 		}
 		if(circRule == "line" || circRule == "lineret"){
+			let oldStroke = ctx.strokeStyle
+			let oldWidth = ctx.lineWidth
 			if(!moved){
 				moved = true
 				ctx.moveTo(x,y)
@@ -181,15 +220,42 @@ function update(){
 				startPos = new Vector2(x, y)
 			}else{
 				ctx.beginPath()
+				var strong = false
+				if(hS){
+					ctx.strokeStyle = "red"
+					strong = true
+				}
+				if(highlight && rules[i-1] && rules[i-1].dataset.id == highlighted){
+					ctx.strokeStyle = "orange"
+					strong = true
+				}
+				if(strong){
+					ctx.lineWidth = 2
+				}
 				ctx.moveTo(linePos.x, linePos.y)
 				ctx.lineTo(x,y)
-				if(i+1 == rules.length && circRule == "lineret"){
-					ctx.lineTo(startPos.x, startPos.y)
-				}
 				ctx.stroke()
+				if(i+1 == rules.length && circRule == "lineret"){
+					ctx.beginPath()
+					if(highlight && highlighted == 0){
+						ctx.strokeStyle = "red"
+						ctx.lineWidth = 2
+					}else if(highlight && highlighted+1 == rules.length){
+						ctx.strokeStyle = "orange"
+						ctx.lineWidth = 2
+					}else{
+						ctx.strokeStyle = oldStroke
+						ctx.lineWidth = oldWidth
+					}
+					ctx.moveTo(x,y)
+					ctx.lineTo(startPos.x, startPos.y)
+					ctx.stroke()
+				}
 				ctx.moveTo(x,y)
 				linePos = new Vector2(x, y)
 			}
+			ctx.strokeStyle = oldStroke
+			ctx.lineWidth = oldWidth
 		}
 		if(circRule == "ret"){
 			if(!moved){
@@ -197,16 +263,26 @@ function update(){
 				ctx.moveTo(x,y)
 				startPos = new Vector2(x, y)
 			}else{
+				let oldStroke = ctx.strokeStyle
+				let oldWidth = ctx.lineWidth
 				ctx.beginPath()
+				if(hS && i != 0){
+					ctx.strokeStyle = "red"
+					ctx.lineWidth = 2
+				}
 				ctx.moveTo(startPos.x, startPos.y)
 				ctx.lineTo(x,y)
 				ctx.stroke()
-				ctx.moveTo(x,y)
+				if(hS){
+					ctx.fillStyle = "orange"
+					drawCircle(rad / 50, startPos, true)
+				}
+				ctx.strokeStyle = oldStroke
+				ctx.lineWidth = oldWidth
 			}
 		}
-		var hS = rules[i].dataset.id == highlighted && highlight //Highlight Self
-		var oldStroke = ctx.strokeStyle
-		var oldWidth = ctx.lineWidth
+		let oldStroke = ctx.strokeStyle
+		let oldWidth = ctx.lineWidth
 		if(hS){
 			ctx.strokeStyle = light ? "darkblue" :"cyan"
 			ctx.lineWidth = 3
