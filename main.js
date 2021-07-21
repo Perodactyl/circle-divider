@@ -41,11 +41,13 @@ var offset = new Vector2()
 var rad = 150
 var lastID = -1
 var highlighted = -1
+var pauseAnims = false
 function addRule(){
+	var defaultRot = Number($("#settings-def-rot").val())
 	lastID++
     var newRule = document.createElement("div")
     newRule.dataset.whole = "no"
-    newRule.dataset.value = "180"
+    newRule.dataset.value = defaultRot
 	newRule.dataset.color = "#000000"
 	newRule.dataset.id = lastID
 	newRule.onmouseenter = ()=>{
@@ -67,7 +69,7 @@ function addRule(){
     slider.type = "range"
     slider.min = 0
     slider.max = 360
-    slider.value = 180
+    slider.value = defaultRot
 	slider.classList.add("ruleElem")
 	var slideInt = 0
 	slider.onmousedown = ()=>{
@@ -84,7 +86,7 @@ function addRule(){
     rawIn.type = "number"
     rawIn.min = -1
     rawIn.max = 361
-    rawIn.value = 180
+    rawIn.value = defaultRot
     newRule.append(rawIn)
     slider.onchange = ()=>{
         newRule.dataset.value = slider.value
@@ -114,9 +116,22 @@ function addRule(){
     var killButton = document.createElement("button")
     killButton.innerText = "Delete"
     killButton.onclick = ()=>{
+		Object.keys(intervals).forEach((key)=>{
+			intervals[key].forEach((f)=>{
+				if(f.cmd){
+					var m = f.cmd.match(new RegExp("[^@]*@"+newRule.dataset.id))
+					if(m){
+						delete intervals[key][f]
+					}
+				}
+			})
+		})
         newRule.remove()
 		update()
     }
+	var idSpan = document.createElement("span")
+	idSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+lastID
+	newRule.append(idSpan)
     newRule.append(killButton)
     rules.append(newRule)
 	update()
@@ -310,6 +325,9 @@ update()
 var intervals = {}
 
 function msUpdate(ms){
+	if(pauseAnims){
+		return
+	}
 	Object.keys(intervals).forEach((v)=>{
 		if(ms == v){
 			intervals[v].forEach((f)=>{
@@ -327,8 +345,16 @@ function addInterval(timing, command){
 	if(!intervals[timing]){
 		intervals[timing] = []
 	}
-	intervals[timing].unshift(function(){
+	var newExec = function(kill=false){
 		var el = $(`[data-id=${m[3]}]`).children("input[type=number]");
+		if(el.length != 1 || kill){
+			console.log(kill ? "Killed Animation" :"Did not find unique node.")
+			intervals[timing].splice(intervals[timing].indexOf(newExec), 1)
+			if(intervals[timing].length == 0){
+				delete intervals[timing]
+			}
+			return
+		}
 		if(m[1] == "+" || m[1] == "++"){
 			el.val(Number(el.val())+1);
 		}else{
@@ -338,10 +364,27 @@ function addInterval(timing, command){
 		el.parent().data("value", el.val())
 		el.siblings("input[type=range]").val(el.val())
 		el.siblings("input[type=range]")[0].onmousemove()
-	})
+	}
+	newExec.cmd = command
+	intervals[timing].unshift(newExec)
 }
 
 setInterval(msUpdate, 25, 25)
 setInterval(msUpdate, 100, 100)
 setInterval(msUpdate, 500, 500)
 setInterval(msUpdate, 1000, 1000)
+
+function addAnim(){
+	var cmd = `+${Number($('#settings-anim-inc').val())}@${id}`
+	addInterval(Number($('#settings-anim-time').val()), cmd)
+}
+
+
+function removeAnims(id){
+	Object.keys(intervals).forEach((key)=>{
+		intervals[key].forEach((f)=>{
+			if(f.cmd.match("@"+id))
+			f(true)
+		})
+	})
+}

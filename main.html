@@ -36,6 +36,10 @@
 			border-radius:5px;
 			padding:1px;
 		}
+
+		#settingsDiv input[type=number]{
+			width:50px;
+		}
 		
 		select{
 			background-color: #999999;
@@ -51,9 +55,23 @@
 			background-color: white;
 			color:black;
 		}
-body input, body button {
-	background-color: #2C2C2C;
-}
+		body input, body button {
+			background-color: #2C2C2C;
+		}
+		#settingsDiv{
+			position: absolute;
+			bottom:50px;
+			right:100px;
+			width:600px;
+			height:100px;
+			background-color: #999999;
+			border-radius: 10px;
+			padding:5px;
+		}
+		.dark{
+			background-color: #777777;
+			color:black;
+		}
 	</style>
 </head>
 <body>
@@ -70,7 +88,18 @@ body input, body button {
 		<option value="lineret">Line around with return</option>
 		<option value="ret" class="final">Return each time</option>
 	</select> Vertical Offset: <input type="range" min="-150" max="150" onmousemove="offset.y = this.value;update()" id="offsety"><button onclick="$('#offsety').val('0');$('#rad').val('150');rad=150;offset.y=0;update()">Reset</button>Radius: <input type="range" id="rad" min="0" value="150" max="300" onmousemove="rad = this.value;update()">
-	<div id="rules">Whole | Rotation(Slider)&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Rotation(Number)</div>
+	<div id="rules">Whole | Rotation(Slider)&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;Rotation(Number) | ID</div>
+	<div id="settingsDiv">
+		Default Rotation: <input type="number" id="settings-def-rot" min="0" max="360" value="180" class="dark"><br>
+		<br>
+		Animated affect: Every <select id="settings-anim-time" class="dark">
+			<option value="25">25ms</option>
+			<option value="100">100ms</option>
+			<option value="500">500ms</option>
+			<option value="1000">second</option>
+		</select>, add <input type="number" id="settings-anim-inc" class="dark">&deg; to line ID <input type="number" id="settings-anim-id" class="dark"><button onclick="addAnim()">Apply</button><br>
+		<input type="checkbox" id="settings-anim-pause" onclick="pauseAnims = !pauseAnims"> Pause animations
+	</div>
 	<script src="main.js"></script>
 </body>
 </html>
